@@ -8,42 +8,56 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(250), nullable=False, index=True)
-    firstname = Column(String(250), nullable=False)
-    lastname = Column(String(250), nullable=False)
-    email = Column(String(250), unique=True, nullable=False)
 
-class Follower(Base):
-    __tablename__ = 'follower'
-    user_from_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    user_to_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    user = relationship(User)
-
-class Post(Base):
-    __tablename__ = 'post'
+class Usuario(Base): 
+    __tablename__ = 'usuario'
     id = Column(Integer, primary_key=True)
-    post_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    nombredeusuario = Column(String(120), unique=True)
+    clave = Column(String(120), unique=True)
 
-class Media(Base):
-    __tablename__ = 'media'
-    id = Column(Integer, primary_key=True)
-    type = Column(String(250), nullable=False)
-    url = Column(String(250), nullable=False)
-    post_id = Column(Integer, ForeignKey('post.id'))
-    post = relationship(Post)
+class Favoritos(Base):
+    __tablename__ = 'favoritos'
+    id_fav = Column(Integer, primary_key=True)
+    planetas_fav = Column(String(255), nullable=False)
+    personajes_fav = Column(String(255), nullable=False)
+    vehiculos_fav = Column(String(255), nullable=False)
+    idusuario = Column(Integer, ForeignKey('usuario.id'))
+    usuariofavoritos =  relationship(Usuario)
 
-class Comment(Base):
-    __tablename__ = 'comment'
+class Personajes(Base):
+    __tablename__ = 'personajes'
     id = Column(Integer, primary_key=True)
-    comment_text = Column(String(500), nullable=False)
-    author_id = Column(Integer, ForeignKey('user.id'))
-    post_id = Column(Integer, ForeignKey('post.id'))
-    user = relationship(User)
-    post = relationship(Post)
+    nombre = Column(String(120), nullable=False)
+    universo = Column(Integer, ForeignKey('planetas.id'))
+    favoritos = Column(Integer, ForeignKey('favoritos.personajes_fav'))
+    usuario = relationship(Usuario)
+
+
+class Planetas(Base):
+    __tablename__ = 'planetas'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(80), nullable=False)
+    personajes = Column(Integer, ForeignKey('personajes.id'))
+    densidad = Column(Integer)
+    gravedad = Column(Integer)
+    favoritos = Column(Integer, ForeignKey('favoritos.planetas_fav'))
+    usuario = relationship(Usuario)
+
+
+class Vehiculos(Base):
+    __tablename__ = 'vehiculos'
+    id = Column(Integer, primary_key=True)
+    modelo = Column(String(120), nullable=False)
+    nombre = Column(String(120), nullable=False)
+    fabricante = Column(String(120), nullable=False)
+    pilotos = Column(Integer, ForeignKey('personajes.id'))
+    favoritos = Column(Integer, ForeignKey('favoritos.vehiculos_fav'))
+    usuario = relationship(Usuario)
+
+
+
+
+
 
     def to_dict(self):
         return {}
